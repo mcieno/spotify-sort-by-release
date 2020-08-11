@@ -57,12 +57,12 @@ def save_tracks(tracks: list, threshold: int = 3) -> None:
 
     # Cannot add all tracks at once, so make multiple API calls.
     MAX_TRACKS = int(threshold)
-    for uris_chunk in map(lambda i: tracks_uris[i:i + MAX_TRACKS],
-                          range(0, len(tracks_uris), MAX_TRACKS)):
+    for i in range(0, len(tracks_uris), MAX_TRACKS):
 
-        print(F'[*] Saving tracks {i} to {i + MAX_TRACKS - 1} of {MAX_TRACKS}',
+        print(F'[*] Saving tracks {i + 1} to {i + MAX_TRACKS} of {len(tracks_uris)}',
               end='    \r')
 
+        uris_chunk = tracks_uris[i:i + MAX_TRACKS]
         response = session.s.put(
             F"https://api.spotify.com/v1/me/tracks",
             data=json.dumps({'ids': uris_chunk}))
@@ -70,7 +70,7 @@ def save_tracks(tracks: list, threshold: int = 3) -> None:
         assert response.status_code is requests.codes.OK, response.text
 
 
-        time.sleep(.1)  # No DoS
+        time.sleep(.5)  # No DoS
 
 
 def delete_tracks(tracks: list) -> None:

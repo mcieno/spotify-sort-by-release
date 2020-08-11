@@ -46,10 +46,19 @@ def sort_library_by_release(args) -> None:
         Namespace containing the following information:
             - reversed (boolean): If `True`, tracks will be sorted in reversed
                                   order: oldest to latest.
+            - threshold (int): Number of songs that could be added together.
+                               For example, if `args.threshold = 5`, then songs
+                               will be added in chunks of 5. The bigger the
+                               threshold the faster the process, but note that
+                               songs inside a chunk might end up in random order.
+            - backup (boolean): If `True`, create a playlist to backup the library
+                                before sorting.
     '''
     # Read all tracks from library and sort them.
     tracks = library.get_tracks()
     tracks = sorted(tracks, key=track_sorting_key, reverse=args.reversed)
+
+    print('\n'.join(track_sorting_key(track) for track in tracks))
 
     # Delete all tracks from library
     print(F"\n Will delete all tracks from the library and "
@@ -58,9 +67,21 @@ def sort_library_by_release(args) -> None:
     if input(' Continue? (y/[N]) ').strip()[:1] not in ('y', 'Y'):
         raise KeyboardInterrupt()
 
+    if args.backup:
+        library_backup_playlist_name = 'Your Library [Backup]'
+        print(F"[+] Backing up library into playlist \"{library_backup_playlist_name}\"")
+
+        destination_playlist = playlists.create_playlist(
+            {'name': library_backup_playlist_name, 'description': '', 'public': False})
+
+        # Add all tracks
+        playlists.add_tracks(destination_playlist['id'], tracks)
+
+    print(F"[+] Deleting tracks from library")
     library.delete_tracks(tracks)
 
     # Add all tracks to library in correct order
+    print(F"[+] Adding tracks back into library")
     library.save_tracks(tracks, threshold=args.threshold)
 
 
@@ -123,9 +144,11 @@ def do_library(args) -> None:
         Namespace from `main`
     '''
     # Sort whole library is lit but risky, make sure the user understands.
-    print(' Remember to backup your library before sorting!')
-    if input(' Continue anyway? (y/[N]) ').strip()[:1] not in ('y', 'Y'):
-        raise KeyboardInterrupt()
+    if not args.backup:
+        print(' Remember to backup your library before sorting!')
+
+        if input(' Continue anyway? (y/[N]) ').strip()[:1] not in ('y', 'Y'):
+            raise KeyboardInterrupt()
 
     # Profit
     sort_library_by_release(args)
@@ -237,6 +260,9 @@ def main() -> None:
     parser_l.add_argument('--threshold', type=int, default=3,
                           help='Maximum number of tracks to add at once')
 
+    parser_l.add_argument('--backup', action='store_true', default=False,
+                          help='Backup your library before sorting')
+
     # Subparser for playlist sorting
     parser_p = subparsers.add_parser('playlist', help='Sort a playlist')
 
@@ -270,7 +296,7 @@ def main() -> None:
         elif 'playlist' == args.command:
             do_playlist(args)
 
-        print(' All done :)')
+        print('\n All done :)')
 
     except (KeyboardInterrupt, EOFError):
         print('\033[1;94m' + r"""
