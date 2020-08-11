@@ -60,11 +60,15 @@ def save_tracks(tracks: list, threshold: int = 3) -> None:
     for uris_chunk in map(lambda i: tracks_uris[i:i + MAX_TRACKS],
                           range(0, len(tracks_uris), MAX_TRACKS)):
 
+        print(F'[*] Saving tracks {i} to {i + MAX_TRACKS - 1} of {MAX_TRACKS}',
+              end='    \r')
+
         response = session.s.put(
             F"https://api.spotify.com/v1/me/tracks",
             data=json.dumps({'ids': uris_chunk}))
 
         assert response.status_code is requests.codes.OK, response.text
+
 
         time.sleep(.1)  # No DoS
 
