@@ -12,7 +12,7 @@ from setuptools import setup
 setup(
     name='spotify-sort-by-release',
     description='Sort Spotify playlists by release date of tracks.',
-    version="1.0.2",
+    version="1.0.3",
     license=__license__,
     author=__author__,
     author_email=__email__,

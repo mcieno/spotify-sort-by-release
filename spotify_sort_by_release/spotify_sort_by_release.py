@@ -61,7 +61,7 @@ def sort_library_by_release(args) -> None:
     library.delete_tracks(tracks)
 
     # Add all tracks to library in correct order
-    library.save_tracks(tracks)
+    library.save_tracks(tracks, threshold=args.threshold)
 
 
 def sort_playlist_by_release(args) -> None:
@@ -234,17 +234,20 @@ def main() -> None:
     # Subparser for library sorting
     parser_l = subparsers.add_parser('library', help='Sort user library')
 
+    parser_l.add_argument('--threshold', type=int, default=3,
+                          help='Maximum number of tracks to add at once')
+
     # Subparser for playlist sorting
     parser_p = subparsers.add_parser('playlist', help='Sort a playlist')
 
     parser_p.add_argument('-p', '--playlist', type=str, default=None,
-                        help='Playlist ID of the playlist to sort')
+                          help='Playlist ID of the playlist to sort')
     parser_p.add_argument('-n', '--name', type=str, default=None,
-                        help='Name of the new playlist with sorted tracks')
+                          help='Name of the new playlist with sorted tracks')
     parser_p.add_argument('-d', '--description', type=str, default=None,
-                        help='Description of the new playlist')
+                          help='Description of the new playlist')
     parser_p.add_argument('--inplace', action='store_true', default=False,
-                        help='Sort playlist in-place.')
+                          help='Sort playlist in-place.')
 
     args = parser.parse_args()
 
