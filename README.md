@@ -3,7 +3,7 @@ spotify-sort-by-release [![Spotify](https://i.imgur.com/mbV7rfR.png)](https://sp
 
 ![forthebadge](https://forthebadge.com/images/badges/built-with-swag.svg)
 
-It's ~2019~ 2020 and [Spotify](https://spotify.com) still doesn't support sorting playlists by release date of tracks. This simple tool uses Spotify Web API to sort a playlist in this way.
+It's ~2019~ ~2020~ 2021 and [Spotify](https://spotify.com) still doesn't support sorting playlists by release date of tracks. This simple tool uses Spotify Web API to sort a playlist in this way.
 
 ## Requirements
 
